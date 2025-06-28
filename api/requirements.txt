@@ -1,4 +1,4 @@
 fastapi
 uvicorn[standard]
 psycopg2-binary
-qdrant-client
+qdrant-client==1.14.3
