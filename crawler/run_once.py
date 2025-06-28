@@ -6,6 +6,7 @@ import psycopg2
 from playwright.async_api import async_playwright
 from sentence_transformers import SentenceTransformer
 from qdrant_client import QdrantClient
+from qdrant_client.http import models as qmodels
 
 DATABASE = {
     'host': os.getenv('PGHOST', 'pg'),
@@ -15,9 +16,27 @@ DATABASE = {
     'dbname': os.getenv('PGDATABASE', 'timeline'),
 }
 
-QDRANT_HOST = os.getenv('QDRANT_HOST', 'vector-db')
-QDRANT_PORT = int(os.getenv('QDRANT_PORT', 6333))
-COLLECTION = 'cards'
+QDRANT_HOST = "vector-db"
+QDRANT_PORT = 6333
+COLLECTION  = "cards"
+
+client = QdrantClient(
+    host=QDRANT_HOST,
+    port=QDRANT_PORT,
+    # サーバとクライアントの minor 差があっても起動できるように
+    check_compatibility=False
+)
+
+vectors_config = qmodels.VectorParams(
+    size=384,
+    distance=qmodels.Distance.COSINE
+)
+
+# ⚠ recreate_collection は既存データを全削除するので注意
+client.recreate_collection(
+    collection_name=COLLECTION,
+    vectors_config=vectors_config
+)
 
 URLS = [
     'https://example.org/',
@@ -40,8 +59,6 @@ async def fetch(url: str):
 
 async def main():
     model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
-    client = QdrantClient(host=QDRANT_HOST, port=QDRANT_PORT)
-    client.recreate_collection(collection_name=COLLECTION, vector_size=384, distance='Cosine')
 
     conn = psycopg2.connect(**DATABASE)
     cur = conn.cursor()
