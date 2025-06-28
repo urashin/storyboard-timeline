@@ -44,9 +44,9 @@ services:
       - "6333:6333"
 
   crawler:
-    image: mcr.microsoft.com/playwright/python:v1.43
+    image: python:3.11-slim
     working_dir: /app
-    command: bash -c "pip install -r requirements.txt && python run_once.py"
+    command: bash -c "pip install -r requirements.txt && playwright install --with-deps && python run_once.py"
     volumes:
       - ./crawler:/app
     depends_on:
