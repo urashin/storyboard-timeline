@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@tanstack/react-virtual": "^3.13.12",
     "class-variance-authority": "^0.7.1",
     "framer-motion": "^12.19.2",
     "lucide-react": "^0.525.0",
