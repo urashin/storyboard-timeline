@@ -1,0 +1,4 @@
+playwright
+qdrant-client==1.14.1
+sentence-transformers
+psycopg2-binary
