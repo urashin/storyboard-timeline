@@ -74,9 +74,16 @@ async def main():
             (url_hash, title, text, ['web'], date.today(), 'https://placehold.co/600x400')
         )
         card_id = cur.fetchone()[0]
-        client.upsert(collection_name=COLLECTION, points=[
-            (card_id, vector.tolist(), {'db_id': card_id})
-        ])
+        client.upsert(
+            collection_name=COLLECTION,
+            points=[
+                {
+                    "id": card_id,
+                    "vector": vector.tolist(),
+                    "payload": {"db_id": card_id},
+                }
+            ],
+        )
     conn.commit()
     cur.close()
     conn.close()
